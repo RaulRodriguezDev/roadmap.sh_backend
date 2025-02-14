@@ -51,9 +51,22 @@ namespace BloggingPlatform.Repository
 
         }
 
-        public Task<Post> DeletePost(int id)
+        public async Task<bool> DeletePost(int id)
         {
-            throw new NotImplementedException();
+            var post = await _context.Posts.Include(p => p.Tags).FirstOrDefaultAsync(p => p.Id == id);
+
+            if ( post == null)
+            {
+                return false;
+            }
+
+            else
+            {
+                post.Tags.Clear();
+                _context.Posts.Remove(post);
+                await _context.SaveChangesAsync();
+                return true;
+            }
         }
 
         public async Task<Post> GetPostById(int id)

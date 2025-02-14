@@ -6,7 +6,7 @@ namespace BloggingPlatform.Repository
     public interface IRepository
     {
         Task<Post> CreatPost(Post post);
-        Task<Post> DeletePost(int id);
+        Task<bool> DeletePost(int id);
         Task<Post> GetPostById(int id);
         Task<List<Post>> GetPosts();
         Task<Post>UpdatePost(int id);

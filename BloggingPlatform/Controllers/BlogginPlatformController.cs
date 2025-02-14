@@ -60,10 +60,11 @@ namespace BloggingPlatform.Controllers
 
         [HttpDelete]
         [Route("posts/{id}")]
-        public IActionResult DeletePost(int id)
+        public async Task<IActionResult> DeletePost(int id)
         {
-            // Delete a post by id
-            return Ok();
+            var isSuccessfull = await _repository.DeletePost(id);
+
+            return isSuccessfull ? NoContent() : NotFound("The post id isn't exist");
         }
 
     }
