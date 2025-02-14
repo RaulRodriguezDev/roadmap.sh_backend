@@ -9,7 +9,7 @@ namespace BloggingPlatform.Repository
         Task<bool> DeletePost(int id);
         Task<Post> GetPostById(int id);
         Task<List<Post>> GetPosts();
-        Task<Post>UpdatePost(int id);
+        Task<Post>UpdatePost(int id, Post post);
         
     }
 }

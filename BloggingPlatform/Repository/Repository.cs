@@ -55,7 +55,7 @@ namespace BloggingPlatform.Repository
         {
             var post = await _context.Posts.Include(p => p.Tags).FirstOrDefaultAsync(p => p.Id == id);
 
-            if ( post == null)
+            if (post == null)
             {
                 return false;
             }
@@ -75,15 +75,15 @@ namespace BloggingPlatform.Repository
                 .Include(p => p.Tags)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
-            return new Post 
-            { 
-                Category = post.Category, 
-                Content = post.Content, 
-                CreatedAt = post.CreatedAt, 
-                Id = post.Id, 
-                Tags = post.Tags.Select(t => t.Name).ToArray(), 
-                Title = post.Title, 
-                UpdatedAt = post.UpdatedAt 
+            return new Post
+            {
+                Category = post.Category,
+                Content = post.Content,
+                CreatedAt = post.CreatedAt,
+                Id = post.Id,
+                Tags = post.Tags.Select(t => t.Name).ToArray(),
+                Title = post.Title,
+                UpdatedAt = post.UpdatedAt
             };
         }
 
@@ -92,9 +92,52 @@ namespace BloggingPlatform.Repository
             throw new NotImplementedException();
         }
 
-        public Task<Post> UpdatePost(int id)
+        public async Task<Post> UpdatePost(int id, Post post)
         {
-            throw new NotImplementedException();
+            var postOem = await _context.Posts.Include(p => p.Tags).FirstOrDefaultAsync(p => p.Id == id);
+
+            if (postOem == null)
+            {
+                return null;
+            }
+
+            else
+            {
+                postOem.Title = post.Title;
+                postOem.Content = post.Content;
+                postOem.Category = post.Category;
+                postOem.UpdatedAt = DateOnly.FromDateTime(DateTime.Now);
+
+                if (post.Tags != null)
+                {
+                    foreach (var tag in post.Tags)
+                    {
+                        var existingTag = await _context.Tags.FirstOrDefaultAsync(t => t.Name == tag);
+                        if (existingTag == null)
+                        {
+                            var newTag = new TagOem { Name = tag };
+                            _context.Tags.Add(newTag);
+                            postOem.Tags.Add(newTag);
+                        }
+                        else
+                        {
+                            postOem.Tags.Add(existingTag);
+                        }
+                        await _context.SaveChangesAsync();
+                    }
+                }
+                await _context.SaveChangesAsync();
+                return new Post
+                {
+                    Category = postOem.Category,
+                    Content = postOem.Content,
+                    CreatedAt = postOem.CreatedAt,
+                    Id = postOem.Id,
+                    Tags = postOem.Tags.Select(t => t.Name).ToArray(),
+                    Title = postOem.Title,
+                    UpdatedAt = postOem.UpdatedAt
+                };
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BloggingPlatform.Models;
+using BloggingPlatform.Models.Response;
 using BloggingPlatform.Repository;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,27 +7,33 @@ namespace BloggingPlatform.Controllers
 {
     [ApiController]
     [Route("api")]
-    public class BlogginPlatformController : ControllerBase
+    public class BlogginPlatformController(IRepository repository) : ControllerBase
     {
-        private readonly IRepository _repository;
-
-        public BlogginPlatformController(IRepository repository)
-        {
-            _repository = repository;
-        }
+        private readonly IRepository _repository = repository;
+        private BadRequestResponse? _badRequestResponse = null;
 
         [HttpPost]
         [Route("posts")]
         public async Task<IActionResult> CreatePost(Post post)
         {
-            var postCreated = await _repository.CreatPost(post);
+            var isValidRequest = await CheckPostModelIsValid(post);
 
-            if(postCreated == null)
-            {
-                return BadRequest("Some fields in the post are worng or missing");
+            if (isValidRequest) {
+                return BadRequest(_badRequestResponse);
             }
 
-            return StatusCode(201, postCreated);
+            else
+            {
+                var postCreated = await _repository.CreatPost(post);
+
+                if (postCreated == null)
+                {
+                    return StatusCode(500,"Something went wrong");
+                }
+
+                return StatusCode(201, postCreated);
+            }
+            
         }
 
         [HttpGet]
@@ -52,10 +59,19 @@ namespace BloggingPlatform.Controllers
 
         [HttpPut]
         [Route("posts/{id}")]
-        public IActionResult UpdatePost(int id, Post post)
+        public async Task<IActionResult> UpdatePost(int id,[FromBody] Post post)
         {
-            // Update a post by id
-            return Ok(post);
+            var isValidRequest = await CheckPostModelIsValid(post);
+
+            if (!isValidRequest)
+            {
+                return BadRequest(_badRequestResponse);
+            }
+
+            var postUpdated = await _repository.UpdatePost(id, post);
+
+            return Ok(postUpdated);
+
         }
 
         [HttpDelete]
@@ -65,6 +81,23 @@ namespace BloggingPlatform.Controllers
             var isSuccessfull = await _repository.DeletePost(id);
 
             return isSuccessfull ? NoContent() : NotFound("The post id isn't exist");
+        }
+
+        private async Task<bool> CheckPostModelIsValid(Post post)
+        {
+            if (post.Title == null || post.Content == null || post.Category == null)
+            {
+                _badRequestResponse = new BadRequestResponse
+                {
+                    Status = "Bad Request",
+                    Message = "Some fields in the post are worng or missing"
+                };
+
+                return await Task.FromResult(false);
+            }
+
+            return await Task.FromResult(true);
+
         }
 
     }
