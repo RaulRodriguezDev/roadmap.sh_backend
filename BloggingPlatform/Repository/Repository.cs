@@ -30,8 +30,13 @@ namespace BloggingPlatform.Repository
                         var newTag = new TagOem { Name = tag };
                         _context.Tags.Add(newTag);
                         newPostOem.Tags.Add(newTag);
-                        await _context.SaveChangesAsync();
                     }
+                    else
+                    {
+                        newPostOem.Tags.Add(existingTag);
+                    }
+
+                    await _context.SaveChangesAsync();
                 }
             }
 
@@ -51,9 +56,22 @@ namespace BloggingPlatform.Repository
             throw new NotImplementedException();
         }
 
-        public Task<Post> GetPostById(int id)
+        public async Task<Post> GetPostById(int id)
         {
-            throw new NotImplementedException();
+            var post = await _context.Posts
+                .Include(p => p.Tags)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            return new Post 
+            { 
+                Category = post.Category, 
+                Content = post.Content, 
+                CreatedAt = post.CreatedAt, 
+                Id = post.Id, 
+                Tags = post.Tags.Select(t => t.Name).ToArray(), 
+                Title = post.Title, 
+                UpdatedAt = post.UpdatedAt 
+            };
         }
 
         public Task<List<Post>> GetPosts()

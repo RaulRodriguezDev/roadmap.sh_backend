@@ -31,18 +31,23 @@ namespace BloggingPlatform.Controllers
 
         [HttpGet]
         [Route("posts")]
-        public IActionResult GetPosts()
+        public async Task<IActionResult> GetPosts()
         {
-            // Get all posts
             return Ok();
         }
 
         [HttpGet]
         [Route("posts/{id}")]
-        public IActionResult GetPost(int id)
+        public async Task<IActionResult> GetPostById(int id)
         {
-            // Get a post by id
-            return Ok();
+            var post = await _repository.GetPostById(id);
+
+            if (post == null)
+            {
+                return NotFound("There isn't a blog with the given id");
+            }
+
+            return Ok(post);
         }
 
         [HttpPut]
