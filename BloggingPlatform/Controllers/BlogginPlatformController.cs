@@ -1,4 +1,5 @@
 ﻿using BloggingPlatform.Models;
+using BloggingPlatform.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BloggingPlatform.Controllers
@@ -7,12 +8,25 @@ namespace BloggingPlatform.Controllers
     [Route("api")]
     public class BlogginPlatformController : Controller
     {
+        public IRepository _repository;
+
+        public BlogginPlatformController(IRepository repository)
+        {
+            _repository = repository;
+        }
+
         [HttpPost]
         [Route("posts")]
-        public IActionResult CreatePost(Post post)
+        public async Task<IActionResult> CreatePost(Post post)
         {
-            // Create a new post
-            return Ok(post);
+            var postCreated = await _repository.CreatPost(post);
+
+            if(postCreated == null)
+            {
+                return BadRequest("Some fields in the post are worng or missing");
+            }
+
+            return StatusCode(201, postCreated);
         }
 
         [HttpGet]

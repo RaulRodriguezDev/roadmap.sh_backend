@@ -1,4 +1,5 @@
 ﻿using BloggingPlatform.Models;
+using BloggingPlatform.Repository.OEMs;
 
 namespace BloggingPlatform.Repository
 {
