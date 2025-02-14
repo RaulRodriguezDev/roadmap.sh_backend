@@ -4,14 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BloggingPlatform.Repository
 {
-    public class Repository : IRepository
+    public class Repository(BlogginPlatformDbContext context) : IRepository
     {
-        public BlogginPlatformDbContext _context;
-
-        public Repository(BlogginPlatformDbContext context)
-        {
-            _context = context;
-        }
+        private readonly BlogginPlatformDbContext _context = context;
 
         public async Task<Post> CreatPost(Post post)
         {

@@ -17,4 +17,4 @@ var app = builder.Build();
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();

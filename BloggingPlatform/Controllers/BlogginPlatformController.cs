@@ -6,9 +6,9 @@ namespace BloggingPlatform.Controllers
 {
     [ApiController]
     [Route("api")]
-    public class BlogginPlatformController : Controller
+    public class BlogginPlatformController : ControllerBase
     {
-        public IRepository _repository;
+        private readonly IRepository _repository;
 
         public BlogginPlatformController(IRepository repository)
         {
