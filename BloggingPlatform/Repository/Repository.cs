@@ -1,6 +1,7 @@
 ﻿using BloggingPlatform.Models;
 using BloggingPlatform.Repository.OEMs;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Primitives;
 
 namespace BloggingPlatform.Repository
 {
@@ -87,9 +88,53 @@ namespace BloggingPlatform.Repository
             };
         }
 
-        public Task<List<Post>> GetPosts()
+        public async Task<List<Post>> GetPosts(List<KeyValuePair<string, StringValues>> query)
         {
-            throw new NotImplementedException();
+            var posts = await _context.Posts
+                    .Include(p => p.Tags)
+                    .Select(posts => new Post
+                    {
+                        Category = posts.Category,
+                        Content = posts.Content,
+                        CreatedAt = posts.CreatedAt,
+                        Id = posts.Id,
+                        Tags = posts.Tags.Select(t => t.Name).ToArray(),
+                        Title = posts.Title,
+                        UpdatedAt = posts.UpdatedAt
+                    }).ToListAsync();
+
+            if (query.Count == 0)
+            {
+                return posts;
+            }
+
+            else
+            {
+                var postsFiltered = posts.Select(post =>
+                {
+                    var postFiltered = post;
+                    foreach (var queryParam in query)
+                    {
+                        if (queryParam.Key == "category" && post.Category.ToLower() != queryParam.Value.ToString().ToLower())
+                        {
+                            postFiltered = null;
+                            break;
+                        }
+                        else if (queryParam.Key == "term")
+                        {
+                            var tag = post.Tags.FirstOrDefault(t => t == queryParam.Value.ToString());
+                            if (tag == null)
+                            {
+                                postFiltered = null;
+                                break;
+                            }
+                        }
+                    }
+                    return postFiltered;
+                }).Where(p => p != null).ToList();
+
+                return postsFiltered;
+            }
         }
 
         public async Task<Post> UpdatePost(int id, Post post)

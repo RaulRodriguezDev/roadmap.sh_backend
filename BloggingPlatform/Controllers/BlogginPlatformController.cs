@@ -40,7 +40,11 @@ namespace BloggingPlatform.Controllers
         [Route("posts")]
         public async Task<IActionResult> GetPosts()
         {
-            return Ok();
+            var query = HttpContext.Request.Query.ToList();
+
+            var posts = await _repository.GetPosts(query);
+
+            return Ok(posts);
         }
 
         [HttpGet]
