@@ -1,0 +1,19 @@
+{
+  "name": "markdown_note_taking_node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+	  "start": "nodemon index.js", 
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2",
+    "markdown-it": "^14.1.0",
+    "nodemon": "^3.1.9"
+  }
+}
