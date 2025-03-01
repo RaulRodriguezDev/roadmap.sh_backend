@@ -1,0 +1,43 @@
+# Ignoring VS files
+
+# Visual Studio
+**/.vscode/
+**/.vs/
+**/*.suo
+**/*.user
+**/*.userossc
+**/*.sln.docstates
+
+# Visual Studio Code
+**/.vscode/
+**/.history/
+**/obj/
+# Node modules
+**/node_modules/
+
+# Debug files
+**/*.log
+**/*.tlog
+**/*.obj
+**/*.pch
+**/*.pdb
+**/*.idb
+**/*.ipch
+**/*.aps
+**/*.ncb
+**/*.opendb
+**/*.opensdf
+**/*.sdf
+**/*.cachefile
+**/*.ilk
+**/*.res
+**/*.rsp
+**/*.sbr
+**/*.tlb
+**/*.tli
+**/*.tmp
+**/*.tmp_proj
+**/*.log
+**/*.vspscc
+**/*.vssscc
+**/**/bin/
