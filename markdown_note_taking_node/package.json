@@ -5,6 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "db:seed": "node ./src/db/seeder.js --i",
+    "db:delete": "node ./src/db/seeder.js --d",
     "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,6 +17,7 @@
     "@types/express": "^5.0.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "markdown_note_taking_node": "file:",
     "markdown-it": "^14.1.0",
     "mysql2": "^3.12.0",
     "nodemon": "^3.1.9",

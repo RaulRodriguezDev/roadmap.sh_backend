@@ -4,13 +4,13 @@ import db from './src/db/config.js'
 
 const app = express()
 
-db.authenticate()
-	.then(() => {
-		console.log('Connection has been established successfully.')
-	})
-	.catch((error) => {
-		console.error('Unable to connect to the database:', error)
-	})
+try{
+	await db.authenticate().
+	db.sync()
+	console.log('Database connected')
+}catch(e){
+	console.log(`Something went wrong: ${e}`)
+}
 
 app.use('/notes', notesRouter)
 
